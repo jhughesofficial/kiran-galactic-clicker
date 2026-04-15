@@ -152,16 +152,16 @@
       <span class="cost" id="rocket-cost">50 ⭐</span>
     </button>
     <button class="upgrade-btn" id="btn-telescope" onclick="buyUpgrade('telescope')">
-      <span>🔭 Telescope — auto +1/sec</span>
-      <span class="cost">100 ⭐</span>
+      <span id="telescope-label">🔭 Telescope #1 — auto +1/sec</span>
+      <span class="cost" id="telescope-cost">100 ⭐</span>
     </button>
     <button class="upgrade-btn" id="btn-satellite" onclick="buyUpgrade('satellite')">
-      <span>🛰️ Satellite — auto +5/sec</span>
-      <span class="cost">500 ⭐</span>
+      <span id="satellite-label">🛰️ Satellite #1 — auto +5/sec</span>
+      <span class="cost" id="satellite-cost">500 ⭐</span>
     </button>
     <button class="upgrade-btn" id="btn-blackhole" onclick="buyUpgrade('blackhole')">
-      <span>🌌 Black Hole — auto +25/sec</span>
-      <span class="cost">2000 ⭐</span>
+      <span id="blackhole-label">🌌 Black Hole #1 — auto +25/sec</span>
+      <span class="cost" id="blackhole-cost">2000 ⭐</span>
     </button>
 
     <button class="upgrade-btn" id="btn-magnet" onclick="buyClickUpgrade('magnet')">
@@ -201,7 +201,7 @@
         kPresses++;
         clearTimeout(kTimer);
         kTimer = setTimeout(() => kPresses = 0, 600);
-        if (kPresses >= 3) {
+        if (kPresses >= 5) {
           kPresses = 0;
           const bar = document.getElementById('cheat-bar');
           bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
@@ -292,10 +292,14 @@
       { emoji: '🌀', name: 'Milky Way',   cost: 10000000,  bonus: '+15000 per click',size: 440 },
       { emoji: '🔮', name: 'Nebula',      cost: 40000000,  bonus: '+40000 per click',size: 390 },
       { emoji: '🌠', name: 'Universe',    cost: 150000000, bonus: '+100000 per click',size: 460 },
-      { emoji: '✨', name: 'Multiverse',  cost: 600000000, bonus: '+500000 per click',size: 480 },
+      { emoji: '✨', name: 'Multiverse',   cost: 600000000,   bonus: '+500000 per click',  size: 480 },
+      { emoji: '🕸️', name: 'Cosmic Web',  cost: 2000000000,  bonus: '+2000000 per click', size: 500 },
+      { emoji: '🌊', name: 'The Void',    cost: 8000000000,  bonus: '+8000000 per click', size: 460 },
+      { emoji: '💠', name: 'Dimension X', cost: 30000000000, bonus: '+30000000 per click',size: 510 },
+      { emoji: '👁️', name: 'Eye of God',  cost: 100000000000,bonus: '+100000000 per click',size: 520 },
     ];
 
-    const clickBonuses = [0, 3, 10, 20, 40, 80, 200, 500, 1000, 5000, 15000, 40000, 100000, 500000];
+    const clickBonuses = [0, 3, 10, 20, 40, 80, 200, 500, 1000, 5000, 15000, 40000, 100000, 500000, 2000000, 8000000, 30000000, 100000000];
 
     function renderPlanetUpgrades() {
       const container = document.getElementById('planet-upgrades');
@@ -366,9 +370,9 @@
     }
 
     const upgrades = {
-      telescope: { cost: 100,  bought: false },
-      satellite: { cost: 500,  bought: false },
-      blackhole: { cost: 2000, bought: false },
+      telescope: { count: 0, cost: 100,  rate: 1,  costMult: 2, label: '🔭 Telescope' },
+      satellite: { count: 0, cost: 500,  rate: 5,  costMult: 2, label: '🛰️ Satellite' },
+      blackhole: { count: 0, cost: 2000, rate: 25, costMult: 2, label: '🌌 Black Hole' },
     };
 
     const planet = document.getElementById('planet');
@@ -421,15 +425,13 @@
 
     function buyUpgrade(name) {
       const u = upgrades[name];
-      if (stars < u.cost || u.bought) return;
+      if (stars < u.cost) return;
       stars -= u.cost;
-      u.bought = true;
-
-      if (name === 'telescope') autoRate += 1;
-      if (name === 'satellite') autoRate += 5;
-      if (name === 'blackhole') autoRate += 25;
-
-      document.getElementById('btn-' + name).disabled = true;
+      u.count++;
+      autoRate += u.rate;
+      u.cost = Math.floor(u.cost * u.costMult);
+      document.getElementById(name + '-label').textContent = `${u.label} #${u.count + 1} — auto +${u.rate}/sec`;
+      document.getElementById(name + '-cost').textContent = u.cost.toLocaleString() + ' ⭐';
       updateDisplay();
     }
 
@@ -443,9 +445,7 @@
       if (planetBtn) planetBtn.disabled = stars < planets[planetLevel + 1]?.cost;
 
       for (const [name, u] of Object.entries(upgrades)) {
-        if (!u.bought) {
-          document.getElementById('btn-' + name).disabled = stars < u.cost;
-        }
+        document.getElementById('btn-' + name).disabled = stars < u.cost;
       }
 
       for (const [name, s] of Object.entries(stations)) {
