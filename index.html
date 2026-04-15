@@ -176,6 +176,14 @@
       <span id="alien-label">👽 Alien Helper #1 — +40 per click</span>
       <span class="cost" id="alien-cost">2500 ⭐</span>
     </button>
+    <button class="upgrade-btn" id="btn-boots" onclick="buyClickUpgrade('boots')">
+      <span id="boots-label">🌙 Moon Boots #1 — +100 per click</span>
+      <span class="cost" id="boots-cost">8000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-lightning" onclick="buyClickUpgrade('lightning')">
+      <span id="lightning-label">⚡ Lightning Strike #1 — +300 per click</span>
+      <span class="cost" id="lightning-cost">30000 ⭐</span>
+    </button>
 
     <h2 style="margin-top:20px">🏗️ Space Stations</h2>
     <button class="upgrade-btn" id="btn-station1" onclick="buyStation('station1')">
@@ -189,6 +197,14 @@
     <button class="upgrade-btn" id="btn-station3" onclick="buyStation('station3')">
       <span id="station3-label">🌠 Mega Station #1 — auto +200/sec</span>
       <span class="cost" id="station3-cost">10000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-robot" onclick="buyStation('robot')">
+      <span id="robot-label">🤖 Star Robot #1 — auto +500/sec</span>
+      <span class="cost" id="robot-cost">50000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-castle" onclick="buyStation('castle')">
+      <span id="castle-label">🏰 Star Castle #1 — auto +2000/sec</span>
+      <span class="cost" id="castle-cost">200000 ⭐</span>
     </button>
   </div>
 
@@ -330,9 +346,11 @@
     }
 
     const clickUpgrades = {
-      magnet: { count: 0, cost: 150,  bonus: 5,  costMult: 2.5, label: '🌟 Star Magnet' },
-      comet:  { count: 0, cost: 600,  bonus: 15, costMult: 2.5, label: '💫 Comet' },
-      alien:  { count: 0, cost: 2500, bonus: 40, costMult: 2.5, label: '👽 Alien Helper' },
+      magnet:    { count: 0, cost: 150,   bonus: 5,   costMult: 2.5, label: '🌟 Star Magnet' },
+      comet:     { count: 0, cost: 600,   bonus: 15,  costMult: 2.5, label: '💫 Comet' },
+      alien:     { count: 0, cost: 2500,  bonus: 40,  costMult: 2.5, label: '👽 Alien Helper' },
+      boots:     { count: 0, cost: 8000,  bonus: 100, costMult: 2.5, label: '🌙 Moon Boots' },
+      lightning: { count: 0, cost: 30000, bonus: 300, costMult: 2.5, label: '⚡ Lightning Strike' },
     };
 
     function buyClickUpgrade(name) {
@@ -351,11 +369,13 @@
     let rocketCost = 50;
 
     const stations = {
-      station1: { count: 0, cost: 300,   rate: 10,  costMult: 2 },
-      station2: { count: 0, cost: 2000,  rate: 50,  costMult: 2 },
-      station3: { count: 0, cost: 10000, rate: 200, costMult: 2 },
+      station1: { count: 0, cost: 300,    rate: 10,   costMult: 2 },
+      station2: { count: 0, cost: 2000,   rate: 50,   costMult: 2 },
+      station3: { count: 0, cost: 10000,  rate: 200,  costMult: 2 },
+      robot:    { count: 0, cost: 50000,  rate: 500,  costMult: 2 },
+      castle:   { count: 0, cost: 200000, rate: 2000, costMult: 2 },
     };
-    const stationNames = { station1: '🛸 Small Station', station2: '🚀 Big Station', station3: '🌠 Mega Station' };
+    const stationNames = { station1: '🛸 Small Station', station2: '🚀 Big Station', station3: '🌠 Mega Station', robot: '🤖 Star Robot', castle: '🏰 Star Castle' };
 
     function buyStation(name) {
       const s = stations[name];
