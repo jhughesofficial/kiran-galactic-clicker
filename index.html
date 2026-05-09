@@ -135,6 +135,92 @@
       100% { opacity: 1; }
     }
 
+    #pause-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 8000;
+      background: #1a1a3a;
+      border: 2px solid #333;
+      border-radius: 10px;
+      color: white;
+      font-size: 1.3rem;
+      padding: 8px 14px;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    #pause-btn:hover {
+      background: #2a2a5a;
+      border-color: #ffe066;
+    }
+
+    #pause-btn.visible {
+      display: block;
+    }
+
+    #pause-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    #pause-screen.show {
+      display: flex;
+    }
+
+    #pause-screen h2 {
+      font-size: 3rem;
+      color: #ffe066;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    #pause-screen p {
+      color: #888;
+      margin-bottom: 36px;
+      font-size: 1rem;
+    }
+
+    .pause-btn {
+      width: 240px;
+      padding: 16px;
+      margin: 8px;
+      border: 2px solid #333;
+      border-radius: 14px;
+      background: #1a1a3a;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .pause-btn:hover {
+      background: #2a2a5a;
+      border-color: #ffe066;
+      transform: scale(1.04);
+    }
+
+    .pause-btn.red {
+      background: #2a0a0a;
+      border-color: #551111;
+      color: #ff6666;
+    }
+
+    .pause-btn.red:hover {
+      background: #3a1010;
+      border-color: #ff4444;
+    }
+
     #main-screen {
       position: fixed;
       inset: 0;
@@ -326,6 +412,16 @@
       <span class="mode-title">Endless Mode</span>
       <span class="mode-desc">No finish line — collect forever.</span>
     </button>
+  </div>
+
+  <button id="pause-btn" onclick="togglePause()">⏸ Pause</button>
+
+  <div id="pause-screen">
+    <h2>⏸ Paused</h2>
+    <p>The universe is waiting...</p>
+    <button class="pause-btn" onclick="togglePause()">▶ Resume</button>
+    <button class="pause-btn" onclick="restartGame(); togglePause()">🔄 Restart</button>
+    <button class="pause-btn red" onclick="restartGame(); togglePause(); document.getElementById('main-screen').classList.remove('hidden'); document.getElementById('pause-btn').classList.remove('visible')">🏠 Main Menu</button>
   </div>
 
   <div id="win-screen">
@@ -565,9 +661,19 @@
 
     let gameMode = 'regular';
 
+    let paused = false;
+
+    function togglePause() {
+      paused = !paused;
+      document.getElementById('pause-screen').classList.toggle('show', paused);
+      document.getElementById('pause-btn').textContent = paused ? '▶ Resume' : '⏸ Pause';
+    }
+
     function startGame(mode) {
       gameMode = mode;
+      paused = false;
       document.getElementById('main-screen').classList.add('hidden');
+      document.getElementById('pause-btn').classList.add('visible');
       updateDisplay();
     }
 
@@ -726,6 +832,7 @@
     }
 
     planet.addEventListener('click', (e) => {
+      if (paused) return;
       stars += clickPower;
       updateDisplay();
       spawnStar(e.clientX, e.clientY);
@@ -788,7 +895,7 @@
 
     // Auto clicker
     setInterval(() => {
-      if (autoRate > 0) {
+      if (autoRate > 0 && !paused) {
         stars += autoRate / 20;
         updateDisplay();
       }
