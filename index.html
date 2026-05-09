@@ -121,6 +121,29 @@
       font-size: 0.9rem;
     }
 
+    #tip-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #12122a;
+      border: 2px solid #2a2a5a;
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      max-width: 400px;
+      width: 100%;
+      font-size: 0.95rem;
+      color: #ccc;
+      animation: tipFade 0.5s ease;
+    }
+
+    #tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    @keyframes tipFade {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     /* Twinkling background stars */
     .bg-star {
       position: fixed;
@@ -444,6 +467,11 @@
   <h1>⭐ Star Clicker</h1>
   <div id="star-count">0 stars</div>
   <div id="planet">🌍</div>
+
+  <div id="tip-box">
+    <span id="tip-icon">💡</span>
+    <span id="tip-text">Click the planet to collect stars!</span>
+  </div>
 
   <div id="upgrades">
     <h2>🪐 Your Planet</h2>
@@ -966,10 +994,44 @@
       updateDisplay();
     }
 
+    const tips = [
+      { check: () => stars < 50,                              icon: '💡', text: 'Keep clicking the planet to collect stars!' },
+      { check: () => stars >= 50 && rocketCount === 0,        icon: '🚀', text: 'You can afford a Rocket! It gives +2 per click.' },
+      { check: () => autoRate === 0 && stars >= 100,          icon: '🔭', text: 'Buy a Telescope to collect stars automatically — even when you\'re not clicking!' },
+      { check: () => autoRate > 0 && autoRate < 10,           icon: '🛸', text: 'Stack auto-collectors! More stations = more stars per second.' },
+      { check: () => clickPower < 10 && stars >= 150,         icon: '🌟', text: 'Star Magnet gives +5 per click. Click upgrades add up fast!' },
+      { check: () => planets[planetLevel + 1] && stars >= planets[planetLevel + 1].cost * 0.5 && stars < planets[planetLevel + 1].cost, icon: '🪐', text: `Almost there! Save up to upgrade to ${planets[planetLevel + 1]?.name}.` },
+      { check: () => autoRate >= 10 && autoRate < 50,         icon: '🛰️', text: 'Try the Satellite — it gives 5 stars/sec automatically!' },
+      { check: () => autoRate >= 50 && planetLevel < 5,       icon: '🌍', text: 'Upgrading your planet gives a big click power boost. Worth saving up for!' },
+      { check: () => rocketCount >= 3 && clickPower < 20,     icon: '💫', text: 'Rockets are good early but click upgrades like Comet scale better later.' },
+      { check: () => stars >= 2000 && autoRate < 25,          icon: '🌌', text: 'Black Hole gives 25 stars/sec — a big jump in auto-collecting!' },
+      { check: () => planetLevel >= 5 && clickPower < 100,    icon: '👽', text: 'Alien Helper gives +40 per click. Great value at this stage!' },
+      { check: () => autoRate >= 200,                         icon: '🏗️', text: 'Space Stations multiply fast — buy the next tier as soon as you can afford it.' },
+      { check: () => planetLevel >= 8,                        icon: '⚡', text: 'Lightning Strike and Vortex Beam are powerful click upgrades for this stage.' },
+      { check: () => planetLevel >= 12,                       icon: '🏰', text: 'Star Castle and Star Robot generate massive auto-stars. Keep buying them!' },
+      { check: () => planetLevel >= 18,                       icon: '🌞', text: 'Solar Array and DNA Lab are the fastest auto-collectors at this stage.' },
+      { check: () => planetLevel >= 22,                       icon: '💎', text: 'Diamond Drill gives +50,000 per click. Stack it alongside your auto income!' },
+      { check: () => planetLevel >= planets.length - 3 && gameMode === 'regular', icon: '🏁', text: 'You\'re almost at The Big Bang — the final planet. You\'re so close!' },
+    ];
+
+    function updateTip() {
+      const active = tips.filter(t => t.check());
+      if (!active.length) return;
+      const t = active[active.length - 1];
+      const box = document.getElementById('tip-box');
+      if (document.getElementById('tip-text').textContent === t.text) return;
+      document.getElementById('tip-icon').textContent = t.icon;
+      document.getElementById('tip-text').textContent = t.text;
+      box.style.animation = 'none';
+      box.offsetHeight;
+      box.style.animation = 'tipFade 0.5s ease';
+    }
+
     function updateDisplay() {
       saveGame();
       starCount.textContent = Math.floor(stars).toLocaleString() + ' stars';
       autoInfo.textContent = autoRate > 0 ? `Auto collecting ${autoRate} stars/sec` : '';
+      updateTip();
 
       document.getElementById('btn-rocket').disabled = stars < rocketCost;
 
