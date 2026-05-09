@@ -99,8 +99,15 @@
     }
 
     .upgrade-btn:disabled {
-      opacity: 0.4;
+      opacity: 1;
       cursor: not-allowed;
+      background: #0d0d1a;
+      border-color: #1a1a2a;
+      color: #333;
+    }
+
+    .upgrade-btn:disabled .cost {
+      color: #333;
     }
 
     .upgrade-btn .cost {
@@ -561,6 +568,7 @@
     function startGame(mode) {
       gameMode = mode;
       document.getElementById('main-screen').classList.add('hidden');
+      updateDisplay();
     }
 
     let stars = 0;
