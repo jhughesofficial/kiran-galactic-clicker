@@ -402,10 +402,15 @@
     <div class="ms-planet">🌍</div>
     <h1>⭐ Star Clicker</h1>
     <p class="tagline">Collect stars. Rule the universe.</p>
+    <button class="mode-btn" id="btn-continue" style="display:none;border-color:#ffe066" onclick="continueGame()">
+      <span class="mode-emoji">💾</span>
+      <span class="mode-title">Continue</span>
+      <span class="mode-desc" id="continue-desc">Resume your saved game</span>
+    </button>
     <button class="mode-btn" onclick="startGame('regular')">
       <span class="mode-emoji">🏆</span>
       <span class="mode-title">Regular Mode</span>
-      <span class="mode-desc">Reach the Magnet Planet to win!</span>
+      <span class="mode-desc">Reach The Big Bang to win!</span>
     </button>
     <button class="mode-btn" onclick="startGame('endless')">
       <span class="mode-emoji">♾️</span>
@@ -422,6 +427,7 @@
     <button class="pause-btn" onclick="togglePause()">▶ Resume</button>
     <button class="pause-btn" onclick="restartGame(); togglePause()">🔄 Restart</button>
     <button class="pause-btn red" onclick="restartGame(); togglePause(); document.getElementById('main-screen').classList.remove('hidden'); document.getElementById('pause-btn').classList.remove('visible')">🏠 Main Menu</button>
+    <button class="pause-btn red" style="margin-top:8px;font-size:0.9rem;opacity:0.7" onclick="deleteSave()">🗑️ Delete Save</button>
   </div>
 
   <div id="win-screen">
@@ -669,6 +675,94 @@
       document.getElementById('pause-btn').textContent = paused ? '▶ Resume' : '⏸ Pause';
     }
 
+    function saveGame() {
+      const data = {
+        gameMode, stars, clickPower, autoRate, planetLevel, rocketCount, rocketCost,
+        clickUpgrades: Object.fromEntries(Object.entries(clickUpgrades).map(([k,v]) => [k, { count: v.count, cost: v.cost }])),
+        stations:      Object.fromEntries(Object.entries(stations).map(([k,v])      => [k, { count: v.count, cost: v.cost }])),
+        upgrades:      Object.fromEntries(Object.entries(upgrades).map(([k,v])      => [k, { count: v.count, cost: v.cost }])),
+      };
+      localStorage.setItem('starclicker_save', JSON.stringify(data));
+    }
+
+    function loadGame() {
+      const raw = localStorage.getItem('starclicker_save');
+      if (!raw) return false;
+      const d = JSON.parse(raw);
+
+      gameMode    = d.gameMode ?? 'regular';
+      stars       = d.stars ?? 0;
+      clickPower  = d.clickPower ?? 1;
+      autoRate    = d.autoRate ?? 0;
+      planetLevel = d.planetLevel ?? 0;
+      rocketCount = d.rocketCount ?? 0;
+      rocketCost  = d.rocketCost ?? 50;
+
+      for (const [k, v] of Object.entries(d.clickUpgrades ?? {})) {
+        if (clickUpgrades[k]) { clickUpgrades[k].count = v.count; clickUpgrades[k].cost = v.cost; }
+      }
+      for (const [k, v] of Object.entries(d.stations ?? {})) {
+        if (stations[k]) { stations[k].count = v.count; stations[k].cost = v.cost; }
+      }
+      for (const [k, v] of Object.entries(d.upgrades ?? {})) {
+        if (upgrades[k]) { upgrades[k].count = v.count; upgrades[k].cost = v.cost; }
+      }
+
+      // Restore planet display
+      const p = document.getElementById('planet');
+      p.textContent = planets[planetLevel].emoji;
+      p.style.width  = planets[planetLevel].size + 'px';
+      p.style.height = planets[planetLevel].size + 'px';
+
+      // Restore rocket label
+      document.getElementById('rocket-label').textContent = `🚀 Rocket #${rocketCount + 1} — +2 per click`;
+      document.getElementById('rocket-cost').textContent  = rocketCost.toLocaleString() + ' ⭐';
+
+      // Restore click upgrade labels
+      for (const [name, u] of Object.entries(clickUpgrades)) {
+        document.getElementById(name + '-label').textContent = `${u.label} #${u.count + 1} — +${u.bonus} per click`;
+        document.getElementById(name + '-cost').textContent  = u.cost.toLocaleString() + ' ⭐';
+      }
+      // Restore station labels
+      for (const [name, s] of Object.entries(stations)) {
+        document.getElementById(name + '-label').textContent = `${stationNames[name]} #${s.count + 1} — auto +${s.rate}/sec`;
+        document.getElementById(name + '-cost').textContent  = s.cost.toLocaleString() + ' ⭐';
+      }
+      // Restore auto upgrade labels
+      for (const [name, u] of Object.entries(upgrades)) {
+        document.getElementById(name + '-label').textContent = `${u.label} #${u.count + 1} — auto +${u.rate}/sec`;
+        document.getElementById(name + '-cost').textContent  = u.cost.toLocaleString() + ' ⭐';
+      }
+
+      renderPlanetUpgrades();
+      return true;
+    }
+
+    function continueGame() {
+      if (!loadGame()) return;
+      paused = false;
+      document.getElementById('main-screen').classList.add('hidden');
+      document.getElementById('pause-btn').classList.add('visible');
+      updateDisplay();
+    }
+
+    function deleteSave() {
+      localStorage.removeItem('starclicker_save');
+      document.getElementById('btn-continue').style.display = 'none';
+      alert('Save deleted!');
+    }
+
+    function checkForSave() {
+      const raw = localStorage.getItem('starclicker_save');
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      const btn = document.getElementById('btn-continue');
+      btn.style.display = 'block';
+      const pl = planets[d.planetLevel ?? 0];
+      document.getElementById('continue-desc').textContent =
+        `${pl.emoji} ${pl.name} · ${Math.floor(d.stars ?? 0).toLocaleString()} ⭐`;
+    }
+
     function startGame(mode) {
       gameMode = mode;
       paused = false;
@@ -815,6 +909,7 @@
     const autoInfo = document.getElementById('auto-info');
 
     renderPlanetUpgrades();
+    checkForSave();
 
     // Background stars
     for (let i = 0; i < 80; i++) {
@@ -872,6 +967,7 @@
     }
 
     function updateDisplay() {
+      saveGame();
       starCount.textContent = Math.floor(stars).toLocaleString() + ' stars';
       autoInfo.textContent = autoRate > 0 ? `Auto collecting ${autoRate} stars/sec` : '';
 
