@@ -127,6 +127,173 @@
       0%   { opacity: 0.2; }
       100% { opacity: 1; }
     }
+
+    #main-screen {
+      position: fixed;
+      inset: 0;
+      background: #0a0a1a;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    #main-screen.hidden {
+      display: none;
+    }
+
+    #main-screen .ms-planet {
+      font-size: 7rem;
+      margin-bottom: 10px;
+      animation: floatPlanet 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatPlanet {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-18px); }
+    }
+
+    #main-screen h1 {
+      font-size: 3.5rem;
+      color: #ffe066;
+      text-shadow: 0 0 30px #ffe066, 0 0 60px #ff9900;
+      margin-bottom: 6px;
+      letter-spacing: 3px;
+    }
+
+    #main-screen .tagline {
+      color: #888;
+      font-size: 1rem;
+      margin-bottom: 40px;
+    }
+
+    .mode-btn {
+      width: 260px;
+      padding: 18px 24px;
+      margin: 10px;
+      border: 2px solid #333;
+      border-radius: 16px;
+      background: #1a1a3a;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .mode-btn:hover {
+      background: #2a2a5a;
+      border-color: #ffe066;
+      transform: scale(1.04);
+    }
+
+    .mode-btn .mode-emoji {
+      font-size: 2.2rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .mode-btn .mode-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .mode-btn .mode-desc {
+      font-size: 0.82rem;
+      color: #aaa;
+      display: block;
+    }
+
+    #win-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    #win-screen.show {
+      display: flex;
+    }
+
+    #win-screen h1 {
+      font-size: 3.5rem;
+      color: #ffe066;
+      text-shadow: 0 0 40px #ffe066, 0 0 80px #ff9900;
+      margin-bottom: 16px;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    #win-screen p {
+      font-size: 1.3rem;
+      color: #ccc;
+      margin-bottom: 10px;
+      max-width: 500px;
+    }
+
+    #win-screen .big-emoji {
+      font-size: 6rem;
+      margin-bottom: 20px;
+      animation: spin 4s linear infinite;
+    }
+
+    #win-screen .win-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    #win-screen button {
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    #win-screen .btn-keep {
+      background: #ffe066;
+      color: #000;
+    }
+
+    #win-screen .btn-restart {
+      background: #aa00ff;
+      color: #fff;
+    }
+
+    @keyframes pulse {
+      0%   { text-shadow: 0 0 20px #ffe066; }
+      100% { text-shadow: 0 0 60px #ffe066, 0 0 100px #ff9900; }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+      z-index: 10000;
+    }
+
+    @keyframes confettiFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -136,6 +303,33 @@
     <button onclick="addCheatStars()" style="padding:8px 16px;border-radius:8px;border:none;background:#ffe066;color:#000;font-weight:bold;cursor:pointer;font-size:1rem">Give me stars!</button>
     <button onclick="resetStars()" style="padding:8px 16px;border-radius:8px;border:none;background:#ff4444;color:#fff;font-weight:bold;cursor:pointer;font-size:1rem">Reset stars</button>
     <button onclick="restartGame()" style="padding:8px 16px;border-radius:8px;border:none;background:#aa00ff;color:#fff;font-weight:bold;cursor:pointer;font-size:1rem">Restart game</button>
+  </div>
+
+  <div id="main-screen">
+    <div class="ms-planet">🌍</div>
+    <h1>⭐ Star Clicker</h1>
+    <p class="tagline">Collect stars. Rule the universe.</p>
+    <button class="mode-btn" onclick="startGame('regular')">
+      <span class="mode-emoji">🏆</span>
+      <span class="mode-title">Regular Mode</span>
+      <span class="mode-desc">Reach the Magnet Planet to win!</span>
+    </button>
+    <button class="mode-btn" onclick="startGame('endless')">
+      <span class="mode-emoji">♾️</span>
+      <span class="mode-title">Endless Mode</span>
+      <span class="mode-desc">No finish line — collect forever.</span>
+    </button>
+  </div>
+
+  <div id="win-screen">
+    <div class="big-emoji">💥</div>
+    <h1>YOU WIN!</h1>
+    <p>You triggered <strong>The Big Bang</strong> and created a whole new universe!</p>
+    <p style="color:#ffe066;font-size:1.1rem">You collected more stars than there are in the cosmos. 🌌</p>
+    <div class="win-buttons">
+      <button class="btn-keep" onclick="closeWinScreen()">Keep Playing</button>
+      <button class="btn-restart" onclick="restartGame(); closeWinScreen(); document.getElementById('main-screen').classList.remove('hidden')">Play Again</button>
+    </div>
   </div>
 
   <h1>⭐ Star Clicker</h1>
@@ -163,6 +357,14 @@
       <span id="blackhole-label">🌌 Black Hole #1 — auto +25/sec</span>
       <span class="cost" id="blackhole-cost">2000 ⭐</span>
     </button>
+    <button class="upgrade-btn" id="btn-pulsar" onclick="buyUpgrade('pulsar')">
+      <span id="pulsar-label">💫 Pulsar #1 — auto +100/sec</span>
+      <span class="cost" id="pulsar-cost">8000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-quasar" onclick="buyUpgrade('quasar')">
+      <span id="quasar-label">✨ Quasar #1 — auto +500/sec</span>
+      <span class="cost" id="quasar-cost">40000 ⭐</span>
+    </button>
 
     <button class="upgrade-btn" id="btn-magnet" onclick="buyClickUpgrade('magnet')">
       <span id="magnet-label">🌟 Star Magnet #1 — +5 per click</span>
@@ -183,6 +385,22 @@
     <button class="upgrade-btn" id="btn-lightning" onclick="buyClickUpgrade('lightning')">
       <span id="lightning-label">⚡ Lightning Strike #1 — +300 per click</span>
       <span class="cost" id="lightning-cost">30000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-vortex" onclick="buyClickUpgrade('vortex')">
+      <span id="vortex-label">🌀 Vortex Beam #1 — +1000 per click</span>
+      <span class="cost" id="vortex-cost">120000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-crystal" onclick="buyClickUpgrade('crystal')">
+      <span id="crystal-label">🔮 Crystal Wand #1 — +3000 per click</span>
+      <span class="cost" id="crystal-cost">500000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-unicorn" onclick="buyClickUpgrade('unicorn')">
+      <span id="unicorn-label">🦄 Space Unicorn #1 — +10000 per click</span>
+      <span class="cost" id="unicorn-cost">2000000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-diamonddrill" onclick="buyClickUpgrade('diamonddrill')">
+      <span id="diamonddrill-label">💎 Diamond Drill #1 — +50000 per click</span>
+      <span class="cost" id="diamonddrill-cost">10000000 ⭐</span>
     </button>
 
     <h2 style="margin-top:20px">🏗️ Space Stations</h2>
@@ -205,6 +423,18 @@
     <button class="upgrade-btn" id="btn-castle" onclick="buyStation('castle')">
       <span id="castle-label">🏰 Star Castle #1 — auto +2000/sec</span>
       <span class="cost" id="castle-cost">200000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-solar" onclick="buyStation('solar')">
+      <span id="solar-label">🌞 Solar Array #1 — auto +8000/sec</span>
+      <span class="cost" id="solar-cost">1000000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-dnalab" onclick="buyStation('dnalab')">
+      <span id="dnalab-label">🧬 DNA Lab #1 — auto +35000/sec</span>
+      <span class="cost" id="dnalab-cost">6000000 ⭐</span>
+    </button>
+    <button class="upgrade-btn" id="btn-fortress" onclick="buyStation('fortress')">
+      <span id="fortress-label">🏯 Galaxy Fortress #1 — auto +150000/sec</span>
+      <span class="cost" id="fortress-cost">30000000 ⭐</span>
     </button>
   </div>
 
@@ -249,37 +479,74 @@
       document.getElementById('rocket-cost').textContent = '50 ⭐';
 
       // Reset click upgrades
-      clickUpgrades.magnet = { count: 0, cost: 150,  bonus: 5,  costMult: 2.5, label: '🌟 Star Magnet' };
-      clickUpgrades.comet  = { count: 0, cost: 600,  bonus: 15, costMult: 2.5, label: '💫 Comet' };
-      clickUpgrades.alien  = { count: 0, cost: 2500, bonus: 40, costMult: 2.5, label: '👽 Alien Helper' };
-      document.getElementById('magnet-label').textContent = '🌟 Star Magnet #1 — +5 per click';
-      document.getElementById('magnet-cost').textContent = '150 ⭐';
-      document.getElementById('comet-label').textContent = '💫 Comet #1 — +15 per click';
-      document.getElementById('comet-cost').textContent = '600 ⭐';
-      document.getElementById('alien-label').textContent = '👽 Alien Helper #1 — +40 per click';
-      document.getElementById('alien-cost').textContent = '2500 ⭐';
+      clickUpgrades.magnet      = { count: 0, cost: 150,      bonus: 5,     costMult: 2.5, label: '🌟 Star Magnet' };
+      clickUpgrades.comet       = { count: 0, cost: 600,      bonus: 15,    costMult: 2.5, label: '💫 Comet' };
+      clickUpgrades.alien       = { count: 0, cost: 2500,     bonus: 40,    costMult: 2.5, label: '👽 Alien Helper' };
+      clickUpgrades.boots       = { count: 0, cost: 8000,     bonus: 100,   costMult: 2.5, label: '🌙 Moon Boots' };
+      clickUpgrades.lightning   = { count: 0, cost: 30000,    bonus: 300,   costMult: 2.5, label: '⚡ Lightning Strike' };
+      clickUpgrades.vortex      = { count: 0, cost: 120000,   bonus: 1000,  costMult: 2.5, label: '🌀 Vortex Beam' };
+      clickUpgrades.crystal     = { count: 0, cost: 500000,   bonus: 3000,  costMult: 2.5, label: '🔮 Crystal Wand' };
+      clickUpgrades.unicorn     = { count: 0, cost: 2000000,  bonus: 10000, costMult: 2.5, label: '🦄 Space Unicorn' };
+      clickUpgrades.diamonddrill= { count: 0, cost: 10000000, bonus: 50000, costMult: 2.5, label: '💎 Diamond Drill' };
+      for (const [name, u] of Object.entries(clickUpgrades)) {
+        document.getElementById(name + '-label').textContent = `${u.label} #1 — +${u.bonus} per click`;
+        document.getElementById(name + '-cost').textContent = u.cost.toLocaleString() + ' ⭐';
+      }
 
       // Reset stations
-      stations.station1 = { count: 0, cost: 300,   rate: 10,  costMult: 2 };
-      stations.station2 = { count: 0, cost: 2000,  rate: 50,  costMult: 2 };
-      stations.station3 = { count: 0, cost: 10000, rate: 200, costMult: 2 };
-      document.getElementById('station1-label').textContent = '🛸 Small Station #1 — auto +10/sec';
-      document.getElementById('station1-cost').textContent = '300 ⭐';
-      document.getElementById('station2-label').textContent = '🚀 Big Station #1 — auto +50/sec';
-      document.getElementById('station2-cost').textContent = '2000 ⭐';
-      document.getElementById('station3-label').textContent = '🌠 Mega Station #1 — auto +200/sec';
-      document.getElementById('station3-cost').textContent = '10000 ⭐';
+      stations.station1 = { count: 0, cost: 300,      rate: 10,     costMult: 2 };
+      stations.station2 = { count: 0, cost: 2000,     rate: 50,     costMult: 2 };
+      stations.station3 = { count: 0, cost: 10000,    rate: 200,    costMult: 2 };
+      stations.robot    = { count: 0, cost: 50000,    rate: 500,    costMult: 2 };
+      stations.castle   = { count: 0, cost: 200000,   rate: 2000,   costMult: 2 };
+      stations.solar    = { count: 0, cost: 1000000,  rate: 8000,   costMult: 2 };
+      stations.dnalab   = { count: 0, cost: 6000000,  rate: 35000,  costMult: 2 };
+      stations.fortress = { count: 0, cost: 30000000, rate: 150000, costMult: 2 };
+      for (const [name, s] of Object.entries(stations)) {
+        document.getElementById(name + '-label').textContent = `${stationNames[name]} #1 — auto +${s.rate}/sec`;
+        document.getElementById(name + '-cost').textContent = s.cost.toLocaleString() + ' ⭐';
+      }
 
-      // Reset one-time upgrades
-      upgrades.telescope.bought = false;
-      upgrades.satellite.bought = false;
-      upgrades.blackhole.bought = false;
-      document.getElementById('btn-telescope').disabled = false;
-      document.getElementById('btn-satellite').disabled = false;
-      document.getElementById('btn-blackhole').disabled = false;
+      // Reset auto upgrades
+      upgrades.telescope = { count: 0, cost: 100,   rate: 1,   costMult: 2, label: '🔭 Telescope' };
+      upgrades.satellite = { count: 0, cost: 500,   rate: 5,   costMult: 2, label: '🛰️ Satellite' };
+      upgrades.blackhole = { count: 0, cost: 2000,  rate: 25,  costMult: 2, label: '🌌 Black Hole' };
+      upgrades.pulsar    = { count: 0, cost: 8000,  rate: 100, costMult: 2, label: '💫 Pulsar' };
+      upgrades.quasar    = { count: 0, cost: 40000, rate: 500, costMult: 2, label: '✨ Quasar' };
+      for (const [name, u] of Object.entries(upgrades)) {
+        document.getElementById('btn-' + name).disabled = false;
+        document.getElementById(name + '-label').textContent = `${u.label} #1 — auto +${u.rate}/sec`;
+        document.getElementById(name + '-cost').textContent = u.cost.toLocaleString() + ' ⭐';
+      }
 
       renderPlanetUpgrades();
       updateDisplay();
+    }
+
+    function showWinScreen() {
+      document.getElementById('win-screen').classList.add('show');
+      launchConfetti();
+    }
+
+    function closeWinScreen() {
+      document.getElementById('win-screen').classList.remove('show');
+    }
+
+    function launchConfetti() {
+      const colors = ['#ffe066','#ff9900','#ff4444','#44ff88','#44ccff','#cc44ff','#ffffff'];
+      for (let i = 0; i < 120; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'confetti';
+          el.style.left = Math.random() * 100 + 'vw';
+          el.style.background = colors[Math.floor(Math.random() * colors.length)];
+          el.style.width = (6 + Math.random() * 10) + 'px';
+          el.style.height = (6 + Math.random() * 10) + 'px';
+          el.style.animationDuration = (2 + Math.random() * 3) + 's';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 5000);
+        }, i * 30);
+      }
     }
 
     function addCheatStars() {
@@ -287,6 +554,13 @@
       if (!amount || amount < 1) return;
       stars += amount;
       updateDisplay();
+    }
+
+    let gameMode = 'regular';
+
+    function startGame(mode) {
+      gameMode = mode;
+      document.getElementById('main-screen').classList.add('hidden');
     }
 
     let stars = 0;
@@ -319,10 +593,20 @@
       { emoji: '👾', name: 'Alien World',   cost: 25000000000000, bonus: '+25000000000 per click', size: 550 },
       { emoji: '🌈', name: 'Rainbow Nebula',cost: 100000000000000,bonus: '+100000000000 per click',size: 560 },
       { emoji: '💀', name: 'Dead Star',     cost: 400000000000000,bonus: '+400000000000 per click',size: 510 },
-      { emoji: '🧲', name: 'Magnet Planet', cost: 2000000000000000,bonus: '+2000000000000 per click',size: 570 },
+      { emoji: '🧲', name: 'Magnet Planet',    cost: 2e15,  bonus: '+2T per click',      size: 570 },
+      { emoji: '🌟', name: 'Star Forge',        cost: 1e16,  bonus: '+10T per click',     size: 580 },
+      { emoji: '🔷', name: 'Crystal World',     cost: 5e16,  bonus: '+50T per click',     size: 590 },
+      { emoji: '☄️',  name: 'Comet Core',        cost: 2.5e17,bonus: '+250T per click',    size: 580 },
+      { emoji: '🧿', name: 'Mind Sphere',       cost: 1.5e18,bonus: '+1.5Q per click',    size: 600 },
+      { emoji: '🌺', name: 'Bloom World',       cost: 8e18,  bonus: '+8Q per click',      size: 610 },
+      { emoji: '🦋', name: 'Butterfly Nebula',  cost: 4e19,  bonus: '+40Q per click',     size: 600 },
+      { emoji: '🔱', name: 'Trident Star',      cost: 2e20,  bonus: '+200Q per click',    size: 620 },
+      { emoji: '🌑', name: 'Shadow Realm',      cost: 1e21,  bonus: '+1 Qn per click',    size: 630 },
+      { emoji: '🔴', name: 'Red Giant',         cost: 5e21,  bonus: '+5 Qn per click',    size: 640 },
+      { emoji: '💥', name: 'The Big Bang',       cost: 3e22,  bonus: '+30 Qn per click',   size: 660 },
     ];
 
-    const clickBonuses = [0, 3, 10, 20, 40, 80, 200, 500, 1000, 5000, 15000, 40000, 100000, 500000, 2000000, 8000000, 30000000, 100000000, 400000000, 1500000000, 6000000000, 25000000000, 100000000000, 400000000000, 2000000000000];
+    const clickBonuses = [0, 3, 10, 20, 40, 80, 200, 500, 1000, 5000, 15000, 40000, 100000, 500000, 2000000, 8000000, 30000000, 100000000, 400000000, 1500000000, 6000000000, 25000000000, 100000000000, 400000000000, 2000000000000, 10000000000000, 50000000000000, 250000000000000, 1500000000000000, 8000000000000000, 40000000000000000, 200000000000000000, 1000000000000000000, 5000000000000000000, 30000000000000000000];
 
     function renderPlanetUpgrades() {
       const container = document.getElementById('planet-upgrades');
@@ -348,6 +632,7 @@
         p.style.height = planets[planetLevel].size + 'px';
         renderPlanetUpgrades();
         updateDisplay();
+        if (gameMode === 'regular' && planetLevel === planets.length - 1) showWinScreen();
       };
       container.appendChild(btn);
     }
@@ -356,8 +641,12 @@
       magnet:    { count: 0, cost: 150,   bonus: 5,   costMult: 2.5, label: '🌟 Star Magnet' },
       comet:     { count: 0, cost: 600,   bonus: 15,  costMult: 2.5, label: '💫 Comet' },
       alien:     { count: 0, cost: 2500,  bonus: 40,  costMult: 2.5, label: '👽 Alien Helper' },
-      boots:     { count: 0, cost: 8000,  bonus: 100, costMult: 2.5, label: '🌙 Moon Boots' },
-      lightning: { count: 0, cost: 30000, bonus: 300, costMult: 2.5, label: '⚡ Lightning Strike' },
+      boots:       { count: 0, cost: 8000,     bonus: 100,   costMult: 2.5, label: '🌙 Moon Boots' },
+      lightning:   { count: 0, cost: 30000,    bonus: 300,   costMult: 2.5, label: '⚡ Lightning Strike' },
+      vortex:      { count: 0, cost: 120000,   bonus: 1000,  costMult: 2.5, label: '🌀 Vortex Beam' },
+      crystal:     { count: 0, cost: 500000,   bonus: 3000,  costMult: 2.5, label: '🔮 Crystal Wand' },
+      unicorn:     { count: 0, cost: 2000000,  bonus: 10000, costMult: 2.5, label: '🦄 Space Unicorn' },
+      diamonddrill:{ count: 0, cost: 10000000, bonus: 50000, costMult: 2.5, label: '💎 Diamond Drill' },
     };
 
     function buyClickUpgrade(name) {
@@ -379,10 +668,13 @@
       station1: { count: 0, cost: 300,    rate: 10,   costMult: 2 },
       station2: { count: 0, cost: 2000,   rate: 50,   costMult: 2 },
       station3: { count: 0, cost: 10000,  rate: 200,  costMult: 2 },
-      robot:    { count: 0, cost: 50000,  rate: 500,  costMult: 2 },
-      castle:   { count: 0, cost: 200000, rate: 2000, costMult: 2 },
+      robot:    { count: 0, cost: 50000,    rate: 500,    costMult: 2 },
+      castle:   { count: 0, cost: 200000,   rate: 2000,   costMult: 2 },
+      solar:    { count: 0, cost: 1000000,  rate: 8000,   costMult: 2 },
+      dnalab:   { count: 0, cost: 6000000,  rate: 35000,  costMult: 2 },
+      fortress: { count: 0, cost: 30000000, rate: 150000, costMult: 2 },
     };
-    const stationNames = { station1: '🛸 Small Station', station2: '🚀 Big Station', station3: '🌠 Mega Station', robot: '🤖 Star Robot', castle: '🏰 Star Castle' };
+    const stationNames = { station1: '🛸 Small Station', station2: '🚀 Big Station', station3: '🌠 Mega Station', robot: '🤖 Star Robot', castle: '🏰 Star Castle', solar: '🌞 Solar Array', dnalab: '🧬 DNA Lab', fortress: '🏯 Galaxy Fortress' };
 
     function buyStation(name) {
       const s = stations[name];
@@ -397,9 +689,11 @@
     }
 
     const upgrades = {
-      telescope: { count: 0, cost: 100,  rate: 1,  costMult: 2, label: '🔭 Telescope' },
-      satellite: { count: 0, cost: 500,  rate: 5,  costMult: 2, label: '🛰️ Satellite' },
-      blackhole: { count: 0, cost: 2000, rate: 25, costMult: 2, label: '🌌 Black Hole' },
+      telescope: { count: 0, cost: 100,   rate: 1,   costMult: 2, label: '🔭 Telescope' },
+      satellite: { count: 0, cost: 500,   rate: 5,   costMult: 2, label: '🛰️ Satellite' },
+      blackhole: { count: 0, cost: 2000,  rate: 25,  costMult: 2, label: '🌌 Black Hole' },
+      pulsar:    { count: 0, cost: 8000,  rate: 100, costMult: 2, label: '💫 Pulsar' },
+      quasar:    { count: 0, cost: 40000, rate: 500, costMult: 2, label: '✨ Quasar' },
     };
 
     const planet = document.getElementById('planet');
