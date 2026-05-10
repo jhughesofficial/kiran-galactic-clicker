@@ -110,6 +110,10 @@
       color: #333;
     }
 
+    .upgrade-btn:disabled span:first-child::before {
+      content: '🔒 ';
+    }
+
     .upgrade-btn .cost {
       color: #ffe066;
       font-weight: bold;
@@ -252,9 +256,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: center;
-      padding: 40px;
+      padding: 30px 20px;
+      overflow-y: auto;
     }
 
     #main-screen.hidden {
@@ -262,8 +267,8 @@
     }
 
     #main-screen .ms-planet {
-      font-size: 7rem;
-      margin-bottom: 10px;
+      font-size: 5rem;
+      margin-bottom: 6px;
       animation: floatPlanet 3s ease-in-out infinite alternate;
     }
 
@@ -273,17 +278,17 @@
     }
 
     #main-screen h1 {
-      font-size: 3.5rem;
+      font-size: 2.8rem;
       color: #ffe066;
       text-shadow: 0 0 30px #ffe066, 0 0 60px #ff9900;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       letter-spacing: 3px;
     }
 
     #main-screen .tagline {
       color: #888;
-      font-size: 1rem;
-      margin-bottom: 40px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
     }
 
     .mode-btn {
