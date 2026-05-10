@@ -110,8 +110,19 @@
       color: #333;
     }
 
-    .upgrade-btn:disabled span:first-child::before {
-      content: '🔒 ';
+    .upgrade-btn { position: relative; }
+
+    .upgrade-btn:disabled {
+      padding-left: 38px;
+    }
+
+    .upgrade-btn:disabled::before {
+      content: '🔒';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
     }
 
     .upgrade-btn .cost {
@@ -1029,7 +1040,7 @@
     const autoInfo = document.getElementById('auto-info');
 
     renderPlanetUpgrades();
-    checkForSave();
+    try { checkForSave(); } catch(e) { localStorage.removeItem('starclicker_save'); }
 
     // Background stars
     for (let i = 0; i < 80; i++) {
@@ -1120,7 +1131,7 @@
     }
 
     function updateDisplay() {
-      saveGame();
+      try { saveGame(); } catch(e) {}
       starCount.textContent = Math.floor(stars).toLocaleString() + ' stars';
       autoInfo.textContent = autoRate > 0 ? `Auto collecting ${autoRate} stars/sec` : '';
       updateTip();
