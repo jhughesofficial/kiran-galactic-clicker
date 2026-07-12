@@ -505,6 +505,7 @@
       <span class="mode-title">Endless Mode</span>
       <span class="mode-desc">No finish line — collect forever.</span>
     </button>
+    <button id="btn-clear-save" onclick="deleteSave()" style="display:none;margin-top:16px;background:none;border:none;color:#ff6666;font-size:0.9rem;opacity:0.7;cursor:pointer;text-decoration:underline">🗑️ Clear saved game</button>
   </div>
 
   <button id="pause-btn" onclick="togglePause()">⏸ Pause</button>
@@ -858,8 +859,10 @@
     }
 
     function deleteSave() {
+      if (!confirm('Delete your saved game? This cannot be undone.')) return;
       storage.removeItem('starclicker_save');
       document.getElementById('btn-continue').style.display = 'none';
+      document.getElementById('btn-clear-save').style.display = 'none';
       alert('Save deleted!');
     }
 
@@ -869,6 +872,7 @@
       const d = JSON.parse(raw);
       const btn = document.getElementById('btn-continue');
       btn.style.display = 'block';
+      document.getElementById('btn-clear-save').style.display = 'block';
       const savedPlanets = buildPlanets(d.selectedGalaxy ?? 'space');
       const pl = savedPlanets[d.planetLevel ?? 0];
       document.getElementById('continue-desc').textContent =
