@@ -640,6 +640,22 @@
   <div id="auto-info"></div>
 
   <script>
+    const storage = (() => {
+      try {
+        const testKey = '__storage_test__';
+        localStorage.setItem(testKey, '1');
+        localStorage.removeItem(testKey);
+        return localStorage;
+      } catch (e) {
+        const mem = {};
+        return {
+          getItem: k => (k in mem ? mem[k] : null),
+          setItem: (k, v) => { mem[k] = v; },
+          removeItem: k => { delete mem[k]; },
+        };
+      }
+    })();
+
     let kPresses = 0, kTimer = null;
     document.addEventListener('keydown', (e) => {
       if (e.key === 'k') {
@@ -775,11 +791,11 @@
         stations:      Object.fromEntries(Object.entries(stations).map(([k,v])      => [k, { count: v.count, cost: v.cost }])),
         upgrades:      Object.fromEntries(Object.entries(upgrades).map(([k,v])      => [k, { count: v.count, cost: v.cost }])),
       };
-      localStorage.setItem('starclicker_save', JSON.stringify(data));
+      storage.setItem('starclicker_save', JSON.stringify(data));
     }
 
     function loadGame() {
-      const raw = localStorage.getItem('starclicker_save');
+      const raw = storage.getItem('starclicker_save');
       if (!raw) return false;
       const d = JSON.parse(raw);
 
@@ -842,13 +858,13 @@
     }
 
     function deleteSave() {
-      localStorage.removeItem('starclicker_save');
+      storage.removeItem('starclicker_save');
       document.getElementById('btn-continue').style.display = 'none';
       alert('Save deleted!');
     }
 
     function checkForSave() {
-      const raw = localStorage.getItem('starclicker_save');
+      const raw = storage.getItem('starclicker_save');
       if (!raw) return;
       const d = JSON.parse(raw);
       const btn = document.getElementById('btn-continue');
@@ -864,6 +880,7 @@
       paused = false;
       document.getElementById('main-screen').classList.add('hidden');
       document.getElementById('pause-btn').classList.add('visible');
+      renderPlanetUpgrades();
       updateDisplay();
     }
 
@@ -1042,7 +1059,7 @@
     const autoInfo = document.getElementById('auto-info');
 
     renderPlanetUpgrades();
-    try { checkForSave(); } catch(e) { localStorage.removeItem('starclicker_save'); }
+    try { checkForSave(); } catch(e) { storage.removeItem('starclicker_save'); }
 
     // Background stars
     for (let i = 0; i < 80; i++) {
